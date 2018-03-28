@@ -2,14 +2,17 @@
   "name": "news-datarepo-newsapi.org",
   "version": "1.0.0",
   "description": "plugin to the news-datarepo-core module. see news.datarepo.io for details",
-  "main": "index.js",
+  "main": "rc/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "author": "uladkasach",
   "license": "ISC",
   "dependencies": {
     "request": "^2.85.0",
     "request-promise": "^4.2.2"
+  },
+  "devDependencies": {
+    "mocha": "^5.0.5"
   }
 }
