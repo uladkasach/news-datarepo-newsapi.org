@@ -33,6 +33,7 @@ Source.prototype = {
         "country" : "country",
         "catagory" : "catagory",
         "api_key" : "apiKey",
+        "language" : "language",
     },
     normalize_request : function(this_request){
         // cast to empty object if undefined
@@ -73,6 +74,11 @@ Source.prototype = {
         }
         if(typeof query_params.to != "undefined"){
             if(!date_regex.test(query_params.to)) throw new Error("to date not valid");
+        }
+
+        // if everything is set, we should not have country defined
+        if(query_params.endpoint == "everything"){
+            if(typeof query_params.country != "undefined") throw new Error("`country` parameter is not defined for `everything` endpoint")
         }
 
         // map the parameters to what api expects

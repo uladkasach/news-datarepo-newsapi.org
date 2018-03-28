@@ -77,6 +77,11 @@ describe("request normalization", function(){
         var query_params = source.normalize_request({query:"NYSE:F"});
         assert.equal(query_params.q, "NYSE:F");
     })
+    it("should set language", function(){
+        var source = new Source("test_key", {endpoint:"top-headlines"});
+        var query_params = source.normalize_request({language:"en"});
+        assert.equal(query_params.language, "en");
+    })
     it("should set from", function(){
         var source = new Source("test_key", {endpoint:"top-headlines"});
         var query_params = source.normalize_request({from:"2018-03-15"});
