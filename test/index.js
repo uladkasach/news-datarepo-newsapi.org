@@ -164,7 +164,7 @@ describe("making request", async function(){
         var response = await source.make_request(query_params);
         assert.equal(typeof response, "object"); // repsonse should be an object
     })
-    it("should be able to retreive all pages");
+    it("should be able to retrieve all pages");
 })
 describe("parsing response", function(){
     it("should be able to parse response", function(){
@@ -179,10 +179,10 @@ describe("parsing response", function(){
     })
 })
 describe("all together", async function(){
-    it("should be able to retreive data as expected", async function(){
+    it("should be able to retrieve data as expected", async function(){
         this.skip();
         var source = new Source(config.api_key, {country:"us"});
-        var articles = await source.retreive({
+        var articles = await source.retrieve({
             endpoint : "top-headlines",
             catagory : "business",
         })

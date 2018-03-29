@@ -1,5 +1,5 @@
 /*
-    use newsapi.org to retreive news data, save data to csv
+    use newsapi.org to retrieve news data, save data to csv
     https://newsapi.org/v2/top-headlines?country=us&category=business&apiKey=6afbb998f94c435180c8d4ce4282b7cf
 */
 var request = require("request-promise")
@@ -21,9 +21,9 @@ var Source = function(api_key, defaults, logger){
 }
 Source.prototype = {
     // request method
-    retreive : async function(request){
+    retrieve : async function(request){
         var query_params = this.normalize_request(request);
-        var raw_articles = await this.retreive_all_articles(query_params);
+        var raw_articles = await this.retrieve_all_articles(query_params);
         var articles = this.parse_articles(raw_articles);
         return articles;
     },
@@ -100,18 +100,18 @@ Source.prototype = {
         // return mapped_query_params
         return mapped_query_params;
     },
-    retreive_all_articles : async function(query_params){
+    retrieve_all_articles : async function(query_params){
         var articles = [];
 
         // get content
         var response = await this.make_request(query_params);
-        var articles = articles.concat(response.articles); // concat the articles retreived
+        var articles = articles.concat(response.articles); // concat the articles retrieved
 
         // resolve here if user did not want /all/ data
         if(query_params.page != "all") return articles;
 
-        // if user requested all pages, make requests one by one untill all pages are retreived
-        var page_count = 1; // we just retreived page 1
+        // if user requested all pages, make requests one by one untill all pages are retrieved
+        var page_count = 1; // we just retrieved page 1
         var total_results = response.totalResults;
         this.logger.log("retreiving all " + total_results + " articles...")
         this.logger.log("    `-> " + articles.length  + " out of " + total_results)
