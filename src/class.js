@@ -148,7 +148,7 @@ Source.prototype = {
         var data = [];
         articles.forEach((article)=>{
             let this_data = {
-                timestamp : article.publishedAt,
+                published : article.publishedAt,
                 title : article.title,
                 description : article.description,
                 url : article.url,

@@ -172,7 +172,7 @@ describe("parsing response", function(){
         var articles = response.articles;
         var articles = Source.prototype.parse_articles(articles);
         articles.forEach((article)=>{
-            assert(typeof article.timestamp, "string");
+            assert(typeof article.published, "string");
             assert(typeof article.title, "string");
             assert(typeof article.url, "string");
         })
