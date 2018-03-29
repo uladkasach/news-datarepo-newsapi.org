@@ -92,6 +92,12 @@ describe("request normalization", function(){
         var query_params = source.normalize_request({to:"2018-03-16"});
         assert.equal(query_params.to, "2018-03-16");
     })
+    it("should set both to and from", function(){
+        var source = new Source("test_key", {endpoint:"top-headlines"});
+        var query_params = source.normalize_request({from:"2018-02-16", to:"2018-03-16"});
+        assert.equal(query_params.from, "2018-02-16");
+        assert.equal(query_params.to, "2018-03-16");
+    })
     it("should complain if not a valid date - from", function(){
         var source = new Source("test_key", {endpoint:"top-headlines"});
         try{
@@ -124,6 +130,7 @@ describe("request normalization", function(){
             assert.equal(error.message, "sort_by is not valid")
         }
     })
+    it("should set page")
     it("should overwrite defaults", function(){
         var source = new Source("test_key", {endpoint:"top-headlines",country:"us"});
         var query_params = source.normalize_request({country:"uk"});
@@ -157,6 +164,7 @@ describe("making request", async function(){
         var response = await source.make_request(query_params);
         assert.equal(typeof response, "object"); // repsonse should be an object
     })
+    it("should be able to retreive all pages");
 })
 describe("parsing response", function(){
     it("should be able to parse response", function(){

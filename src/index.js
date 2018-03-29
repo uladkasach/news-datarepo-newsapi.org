@@ -4,22 +4,27 @@
 */
 var request = require("request-promise")
 
-var Source = function(api_key, defaults){
+var Source = function(api_key, defaults, logger){
     // define api_key
     if(typeof api_key == "undefined") throw new Error("api_key must be defined");
     this.api_key = api_key;
 
     // define query_defaults
-    if(typeof defaults == "undefined") defaults = {}; // default to empty object - no defaults
+    if(typeof defaults == "undefined" || defaults == null) defaults = {}; // default to empty object - no defaults
     if(typeof defaults != "object") throw new Error("defaults must be an object"); // if here, then user did not define defaults properly
     this.query_defaults = defaults;
+
+    // define logger
+    if(typeof logger == "undefined") logger = this._default_logger;
+    if(typeof logger.log == "undefined") throw new Error("logger.log must be defined if defining logger");
+    this.logger = logger;
 }
 Source.prototype = {
     // request method
     retreive : async function(request){
         var query_params = this.normalize_request(request);
-        var response = await this.make_request(query_params);
-        var articles = this.parse_response(response);
+        var raw_articles = await this.retreive_all_articles(query_params);
+        var articles = this.parse_articles(raw_articles);
         return articles;
     },
 
@@ -34,6 +39,7 @@ Source.prototype = {
         "catagory" : "catagory",
         "api_key" : "apiKey",
         "language" : "language",
+        "page" : "page",
     },
     normalize_request : function(this_request){
         // cast to empty object if undefined
@@ -68,12 +74,14 @@ Source.prototype = {
         if(typeof query_params.sort_by != "undefined"){
             if(!["top", "latest", "popular"].includes(query_params.sort_by)) throw new Error("sort_by is not valid")
         }
-        var date_regex = /(\d{4}-\d{2}-\d{2})/g; // assert YYYY-MM-DD
+        var date_regex = /\d{4}-\d{2}-\d{2}/; // assert YYYY-MM-DD
         if(typeof query_params.from != "undefined"){
-            if(!date_regex.test(query_params.from)) throw new Error("from date not valid");
+            var from_is_valid = date_regex.test(query_params.from);
+            if(!from_is_valid) throw new Error("from date not valid");
         }
         if(typeof query_params.to != "undefined"){
-            if(!date_regex.test(query_params.to)) throw new Error("to date not valid");
+            var to_is_valid = date_regex.test(query_params.to);
+            if(!to_is_valid) throw new Error("to date not valid");
         }
 
         // if everything is set, we should not have country defined
@@ -92,6 +100,32 @@ Source.prototype = {
         // return mapped_query_params
         return mapped_query_params;
     },
+    retreive_all_articles : async function(query_params){
+        var articles = [];
+
+        // get content
+        var response = await this.make_request(query_params);
+        var articles = articles.concat(response.articles); // concat the articles retreived
+
+        // resolve here if user did not want /all/ data
+        if(query_params.page != "all") return articles;
+
+        // if user requested all pages, make requests one by one untill all pages are retreived
+        var page_count = 1; // we just retreived page 1
+        var total_results = response.totalResults;
+        this.logger.log("retreiving all " + total_results + " articles...")
+        this.logger.log("    `-> " + articles.length  + " out of " + total_results)
+        while(total_results > articles.length){
+            page_count += 1; // increment page count
+            query_params.page = page_count; // update the page in the query
+            var response = await this.make_request(query_params); // get the response
+            var articles = articles.concat(response.articles); // concat the articles
+            this.logger.log("    `-> " + articles.length  + " out of " + total_results)
+        }
+
+        // return all articles
+        return articles;
+    },
     make_request : async function(query_params){
         var api_root =  "https://newsapi.org/v2/";
         var path = api_root + query_params.endpoint;
@@ -99,7 +133,7 @@ Source.prototype = {
         response = JSON.parse(response);
         return response;
     },
-    parse_response : function(response){
+    parse_articles : function(articles){
         /*
             for each article, return
             {
@@ -112,7 +146,7 @@ Source.prototype = {
 
         // normalize the data responded with
         var data = [];
-        response.articles.forEach((article)=>{
+        articles.forEach((article)=>{
             let this_data = {
                 timestamp : article.publishedAt,
                 title : article.title,
@@ -125,5 +159,13 @@ Source.prototype = {
         // return the data
         return data;
     },
+
+
+    // default logger
+    _default_logger : {
+        log : function(message){
+            console.log(message);
+        }
+    }
 }
 module.exports = Source;
