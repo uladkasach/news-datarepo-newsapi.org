@@ -118,9 +118,16 @@ Source.prototype = {
         while(total_results > articles.length){
             page_count += 1; // increment page count
             query_params.page = page_count; // update the page in the query
-            var response = await this.make_request(query_params); // get the response
-            var articles = articles.concat(response.articles); // concat the articles
-            this.logger.log("    `-> " + articles.length  + " out of " + total_results)
+            try {
+                var response = await this.make_request(query_params); // get the response
+                var articles = articles.concat(response.articles); // concat the articles
+                this.logger.log("    `-> " + articles.length  + " out of " + total_results)
+            } catch (error){
+                console.log("Error was found while trying to make request on page #" + page_count);
+                console.log(error);
+                console.log("Returning articles from pages 1-" + page_count);
+                break;
+            }
         }
 
         // return all articles
