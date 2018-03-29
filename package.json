@@ -2,7 +2,7 @@
   "name": "news-datarepo-newsapi.org",
   "version": "1.0.0",
   "description": "plugin to the news-datarepo-core module. see news.datarepo.io for details",
-  "main": "rc/index.js",
+  "main": "src/class.js",
   "scripts": {
     "test": "mocha"
   },

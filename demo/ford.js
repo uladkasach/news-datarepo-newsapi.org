@@ -1,5 +1,5 @@
 var config = require("../config/test_config.json");
-var Source = require("../src/index.js");
+var Source = require("../src/class.js");
 var source = new Source(config.api_key, {endpoint:"everything", catagory:"business", language:"en"})
 
 var test = async function(){

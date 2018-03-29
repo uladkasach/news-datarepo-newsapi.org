@@ -4,7 +4,7 @@ var config = require("../config/test_config.json")
 var fs = require('fs');
 var example_response = fs.readFileSync(__dirname + "/example_response.txt", 'utf8'); // blocking read
 
-var Source = require("../src/index.js");
+var Source = require("../src/class.js");
 
 describe("init", function(){
     it("should initialize with api_key", function(){
@@ -169,7 +169,8 @@ describe("making request", async function(){
 describe("parsing response", function(){
     it("should be able to parse response", function(){
         var response = JSON.parse(example_response);
-        var articles = Source.prototype.parse_response(response);
+        var articles = response.articles;
+        var articles = Source.prototype.parse_articles(articles);
         articles.forEach((article)=>{
             assert(typeof article.timestamp, "string");
             assert(typeof article.title, "string");
