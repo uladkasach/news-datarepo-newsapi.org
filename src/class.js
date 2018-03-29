@@ -20,6 +20,11 @@ var Source = function(api_key, defaults, logger){
     this.logger = logger;
 }
 Source.prototype = {
+    // cache root definition - for news.datarepo.core
+    get_cache_root : function(){
+        return JSON.stringify(this.query_defaults); // json string of query_defaults defines a good cache_root for this source
+    },
+
     // request method
     retreive : async function(request){
         var query_params = this.normalize_request(request);
